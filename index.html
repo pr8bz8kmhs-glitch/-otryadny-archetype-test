@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Какой у тебя отрядный архетип?</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f7f4fb;color:#24152e}
+.app{max-width:600px;min-height:100vh;margin:auto;padding:24px 18px;display:flex;align-items:center}
+.card{width:100%;background:white;border-radius:28px;padding:28px 22px;box-shadow:0 10px 40px #00000012}
+.logo{font-weight:800;color:#6b10b6;letter-spacing:1px;font-size:14px;margin-bottom:22px}
+h1{font-size:32px;line-height:1.08;margin:0 0 16px}
+h2{font-size:25px;line-height:1.2;margin:12px 0 22px}
+p{font-size:17px;line-height:1.45}
+.btn{width:100%;border:0;border-radius:16px;padding:16px;margin-top:12px;background:#6b10b6;color:white;font-size:17px;font-weight:700;cursor:pointer}
+.btn.alt{background:#fcf98e;color:#24152e}
+.answers{display:grid;gap:11px}
+.answer{width:100%;padding:15px 16px;text-align:left;border:2px solid #eee5f5;background:white;border-radius:15px;font-size:16px;cursor:pointer}
+.answer:hover{border-color:#a85aec}
+.progress{height:8px;background:#eee6f4;border-radius:10px;overflow:hidden;margin:8px 0 22px}
+.progress i{display:block;height:100%;background:#a85aec;border-radius:10px;transition:.3s}
+.num{font-size:14px;color:#806b8b;font-weight:700}
+.result{background:#6b10b6;color:white;border-radius:24px;padding:25px}
+.result .tag{display:inline-block;background:#fcf98e;color:#24152e;border-radius:20px;padding:7px 12px;font-size:13px;font-weight:700;margin-bottom:15px}
+.result h2{font-size:30px;margin:4px 0 12px}
+.result p{font-size:16px}
+.hidden{display:none}
+.small{font-size:13px;color:#806b8b;margin-top:15px;text-align:center}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="card">
+
+<div id="start">
+<div class="logo">ФОКУС НА МОЛОДЁЖЬ</div>
+<h1>Какой у тебя<br>отрядный архетип?</h1>
+<p>Ответь на 7 вопросов и узнай, какую роль ты чаще всего берёшь на себя в отряде.</p>
+<button class="btn" onclick="start()">Начать тест</button>
+<p class="small">7 вопросов · 14 архетипов</p>
+</div>
+
+<div id="quiz" class="hidden">
+<div class="logo">ФОКУС НА МОЛОДЁЖЬ</div>
+<div class="num" id="num"></div>
+<div class="progress"><i id="bar"></i></div>
+<h2 id="question"></h2>
+<div class="answers" id="answers"></div>
+</div>
+
+<div id="result" class="hidden">
+<div class="logo">ФОКУС НА МОЛОДЁЖЬ</div>
+<div class="result">
+<div class="tag">ТВОЙ ОТРЯДНЫЙ АРХЕТИП</div>
+<h2 id="rtitle"></h2>
+<p id="rtext"></p>
+</div>
+<button class="btn alt" onclick="restart()">Пройти ещё раз</button>
+</div>
+
+</div>
+</div>
+
+<script>
+const archetypes={
+"Лидер":["Ты умеешь брать ответственность и вести за собой. Когда нужно принять решение, на тебя можно положиться."],
+"Душа отряда":["Ты создаёшь ту самую атмосферу, ради которой хочется возвращаться в отряд. С тобой легко смеяться, общаться и быть собой."],
+"Организатор":["Ты замечаешь детали, умеешь собрать людей и превратить идею в понятный план действий."],
+"Творец":["Ты постоянно находишь нестандартные решения. Там, где другие видят обычную задачу, ты видишь пространство для творчества."],
+"Медийщик":["Ты умеешь замечать интересные моменты и превращать их в историю, которую хочется показать другим."],
+"Командный игрок":["Для тебя главное — команда. Ты умеешь поддержать других и работаешь так, чтобы общий результат становился лучше."],
+"Инициатор":["Ты не ждёшь, пока кто-то начнёт первым. Если появилась идея — тебе хочется попробовать воплотить её в жизнь."],
+"Исследователь":["Тебе интересно пробовать новое, узнавать людей и открывать возможности, которых раньше не замечал."],
+"Наставник":["Ты умеешь спокойно объяснять, поддерживать и помогать другим становиться увереннее."],
+"Мотиватор":["Ты умеешь заряжать окружающих энергией и находить слова, которые помогают не сдаваться."],
+"Стратег":["Ты предпочитаешь сначала подумать, оценить варианты и только потом действовать. Ты видишь ситуацию на несколько шагов вперёд."],
+"Энергетик":["Тебя сложно застать без дела. Ты быстро включаешься в активность и заряжаешь своим настроением окружающих."],
+"Надёжный":["Если ты сказал, что сделаешь — скорее всего, так и будет. На тебя можно рассчитывать даже в сложной ситуации."],
+"Свободный дух":["Ты ценишь самостоятельность и не боишься идти своим путём. Твои идеи часто отличаются от привычных."]
+};
+
+const questions=[
+["В отряде появляется новая идея. Что ты делаешь первым?",[
+["Предлагаю план и распределяю задачи","Лидер"],["Подхватываю идею и придумываю, как сделать её интереснее","Творец"],["Сразу рассказываю об этом и думаю над контентом","Медийщик"],["Зову остальных и предлагаю сделать вместе","Командный игрок"]
+]],
+["До мероприятия осталось мало времени. Твоя реакция?",[
+["Беру задачу на себя и довожу до конца","Надёжный"],["Быстро собираю всех и начинаю действовать","Энергетик"],["Определяю приоритеты и план действий","Стратег"],["Предлагаю несколько необычных решений","Инициатор"]
+]],
+["В отряде появился новичок. Скорее всего ты...",[
+["Помогу освоиться и познакомлю с ребятами","Душа отряда"],["Спокойно объясню, что и как устроено","Наставник"],["Предложу вместе попробовать что-нибудь новое","Исследователь"],["Поддержу и помогу поверить в себя","Мотиватор"]
+]],
+["Какую задачу тебе было бы интереснее получить?",[
+["Организовать большое мероприятие","Организатор"],["Снять и оформить историю о жизни отряда","Медийщик"],["Придумать необычную концепцию","Творец"],["Самостоятельно придумать новый проект","Свободный дух"]
+]],
+["Что важнее всего во время общей работы?",[
+["Чтобы каждый понимал свою задачу","Организатор"],["Чтобы никто не остался в стороне","Командный игрок"],["Чтобы у всех было хорошее настроение","Душа отряда"],["Чтобы команда не потеряла мотивацию","Мотиватор"]
+]],
+["Если что-то пошло не по плану, ты...",[
+["Быстро принимаю решение и двигаюсь дальше","Лидер"],["Ищу причину и продумываю лучший вариант","Стратег"],["Придумываю новый ход","Инициатор"],["Сохраняю спокойствие и делаю то, что нужно","Надёжный"]
+]],
+["Как ты хочешь запомнить этот отрядный сезон?",[
+["Как время, когда я многому научился","Исследователь"],["Как время ярких событий и эмоций","Энергетик"],["Как время, когда я помогал другим","Наставник"],["Как время, когда смог проявить себя по-своему","Свободный дух"]
+]]
+];
+
+let q=0,score={};
+
+function start(){
+ q=0;score={};
+ document.getElementById("start").classList.add("hidden");
+ document.getElementById("result").classList.add("hidden");
+ document.getElementById("quiz").classList.remove("hidden");
+ show();
+}
+
+function show(){
+ let x=questions[q];
+ document.getElementById("num").textContent="ВОПРОС "+(q+1)+" ИЗ "+questions.length;
+ document.getElementById("bar").style.width=((q+1)/questions.length*100)+"%";
+ document.getElementById("question").textContent=x[0];
+ let box=document.getElementById("answers");
+ box.innerHTML="";
+ x[1].forEach(a=>{
+   let b=document.createElement("button");
+   b.className="answer";
+   b.textContent=a[0];
+   b.onclick=()=>answer(a[1]);
+   box.appendChild(b);
+ });
+}
+
+function answer(type){
+ score[type]=(score[type]||0)+1;
+ q++;
+ if(q<questions.length)show();
+ else finish();
+}
+
+function finish(){
+ let best=Object.keys(score).sort((a,b)=>score[b]-score[a])[0];
+ document.getElementById("quiz").classList.add("hidden");
+ document.getElementById("result").classList.remove("hidden");
+ document.getElementById("rtitle").textContent=best;
+ document.getElementById("rtext").textContent=archetypes[best][0];
+}
+
+function restart(){
+ document.getElementById("result").classList.add("hidden");
+ document.getElementById("start").classList.remove("hidden");
+}
+</script>
+</body>
+</html>
