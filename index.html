@@ -354,511 +354,577 @@ p{
 </div>
 
 <script>
-/*
-  ТЕСТ «КАКОЙ У ТЕБЯ ОТРЯДНЫЙ АРХЕТИП?»
-
-  7 вопросов × 4 варианта = 28 ответов.
-  Каждый из 14 архетипов встречается ровно 2 раза.
-  Каждый выбранный ответ = +2 балла своему архетипу.
-
-  Картинки:
-  Для каждого вопроса предусмотрено отдельное место.
-  Позже сюда можно поставить реальные изображения:
-  question-1.svg ... question-7.svg
-*/
+/* ================================
+   ТЕСТ «КАКОЙ У ТЕБЯ ОТРЯДНЫЙ АРХЕТИП?»
+   7 вопросов · 14 архетипов
+================================ */
 
 const archetypes = {
-  leader:{
-    name:"Лидер",
-    icon:"⚡",
-    desc:"Ты умеешь брать ответственность, задавать направление и собирать людей вокруг идеи. Когда начинается движ — ты скорее ведёшь, чем ждёшь.",
-    tags:["инициатива","ответственность","решительность"]
+  leader: {
+    name: "Лидер",
+    icon: "★",
+    desc: "Ты тот человек, который не боится брать ответственность и вести команду за собой. В сложной ситуации на тебя можно положиться.",
+    tags: ["ответственность", "решительность", "команда"]
   },
 
-  soul:{
-    name:"Душа отряда",
-    icon:"☀️",
-    desc:"Ты создаёшь ту самую атмосферу, ради которой хочется быть вместе. Легко находишь контакт с людьми и умеешь превращать обычный день в историю.",
-    tags:["атмосфера","общение","эмоции"]
+  soul: {
+    name: "Душа отряда",
+    icon: "♡",
+    desc: "Ты создаёшь ту самую атмосферу, ради которой хочется возвращаться в отряд. Рядом с тобой легко, весело и по-настоящему тепло.",
+    tags: ["атмосфера", "общение", "поддержка"]
   },
 
-  organizer:{
-    name:"Организатор",
-    icon:"◈",
-    desc:"Ты замечаешь детали и превращаешь хаос в понятный план. На тебя можно положиться, когда нужно довести идею до результата.",
-    tags:["структура","планирование","результат"]
+  organizer: {
+    name: "Организатор",
+    icon: "▣",
+    desc: "Ты умеешь превращать идеи в конкретный план. Сроки, задачи и детали — всё оказывается под контролем.",
+    tags: ["порядок", "планирование", "контроль"]
   },
 
-  creator:{
-    name:"Творец",
-    icon:"✦",
-    desc:"Ты смотришь на привычные вещи под другим углом и постоянно находишь, как сделать интереснее. Идеи у тебя редко заканчиваются.",
-    tags:["идеи","креатив","самовыражение"]
+  creator: {
+    name: "Креатор",
+    icon: "✦",
+    desc: "Тебе постоянно приходят новые идеи. Ты умеешь видеть необычное там, где другие видят обычное, и превращать мысли в нечто настоящее.",
+    tags: ["идеи", "творчество", "эксперименты"]
   },
 
-  media:{
-    name:"Медийщик",
-    icon:"◎",
-    desc:"Ты умеешь заметить момент, рассказать о нём и сделать так, чтобы его увидели другие. Камера, текст или дизайн — твой способ быть в центре событий.",
-    tags:["контент","истории","визуал"]
+  media: {
+    name: "Медиа",
+    icon: "◉",
+    desc: "Ты умеешь замечать моменты, которые хочется сохранить и показать другим. Камера, текст, дизайн или соцсети — твоя стихия.",
+    tags: ["контент", "визуал", "истории"]
   },
 
-  teammate:{
-    name:"Командный игрок",
-    icon:"∞",
-    desc:"Для тебя сила отряда — в людях. Ты слышишь других, поддерживаешь команду и умеешь работать не только ради личного результата.",
-    tags:["команда","поддержка","взаимодействие"]
+  teammate: {
+    name: "Командный игрок",
+    icon: "∞",
+    desc: "Ты ценишь команду и умеешь быть её частью. Для тебя общий результат важнее личного признания.",
+    tags: ["команда", "взаимопомощь", "доверие"]
   },
 
-  initiator:{
-    name:"Инициатор",
-    icon:"↗",
-    desc:"Ты не ждёшь идеального момента — ты предлагаешь попробовать. Твоя энергия помогает идеям переходить из «а что если?» в «давайте сделаем».",
-    tags:["старт","смелость","действие"]
+  initiator: {
+    name: "Инициатор",
+    icon: "→",
+    desc: "Ты не ждёшь, пока кто-то сделает первый шаг. Если видишь возможность — предлагаешь, пробуешь и запускаешь движение.",
+    tags: ["инициатива", "действие", "смелость"]
   },
 
-  explorer:{
-    name:"Исследователь",
-    icon:"⌕",
-    desc:"Тебе интересно пробовать новое, задавать вопросы и выходить за привычные рамки. Ты быстро растёшь там, где есть пространство для эксперимента.",
-    tags:["новизна","любопытство","опыт"]
+  explorer: {
+    name: "Исследователь",
+    icon: "⌁",
+    desc: "Тебе интересно пробовать новое, знакомиться с людьми и выходить за пределы привычного. Каждый новый опыт для тебя — возможность вырасти.",
+    tags: ["новое", "опыт", "развитие"]
   },
 
-  mentor:{
-    name:"Наставник",
-    icon:"♡",
-    desc:"Ты умеешь поддержать, объяснить и помочь человеку поверить в себя. Тебе важно, чтобы рядом росли не только ты, но и команда.",
-    tags:["забота","знания","поддержка"]
+  mentor: {
+    name: "Наставник",
+    icon: "◇",
+    desc: "Ты умеешь объяснять, помогать и замечать, когда кому-то нужна поддержка. Тебе важно, чтобы рядом развивались не только ты, но и другие.",
+    tags: ["знания", "помощь", "развитие"]
   },
 
-  motivator:{
-    name:"Мотиватор",
-    icon:"★",
-    desc:"Ты умеешь зажигать людей общей целью. Даже когда усталость берёт своё, ты находишь слова и энергию, чтобы двигаться дальше.",
-    tags:["энергия","вдохновение","цель"]
+  motivator: {
+    name: "Мотиватор",
+    icon: "↑",
+    desc: "Ты умеешь зажигать людей общей идеей. Когда команда устала или сомневается, именно ты помогаешь снова поверить в результат.",
+    tags: ["энергия", "вдохновение", "движение"]
   },
 
-  strategist:{
-    name:"Стратег",
-    icon:"⌁",
-    desc:"Ты сначала смотришь на ситуацию целиком, а потом действуешь. Любишь продумывать ходы наперёд и видеть, к чему приведёт решение.",
-    tags:["логика","план","тактика"]
+  strategist: {
+    name: "Стратег",
+    icon: "⌖",
+    desc: "Ты привык сначала подумать, а потом действовать. Видишь несколько шагов вперёд и умеешь находить наиболее разумное решение.",
+    tags: ["логика", "анализ", "тактика"]
   },
 
-  energizer:{
-    name:"Энергетик",
-    icon:"⚡",
-    desc:"Тебе сложно сидеть без дела — хочется движения, событий и новых впечатлений. Ты умеешь заряжать окружающих собственным темпом.",
-    tags:["движение","темп","активность"]
+  energizer: {
+    name: "Энерджайзер",
+    icon: "⚡",
+    desc: "Твоей энергии хватает на несколько человек. Ты легко включаешься в происходящее и помогаешь команде не сбавлять темп.",
+    tags: ["энергия", "активность", "настроение"]
   },
 
-  reliable:{
-    name:"Надёжный",
-    icon:"✓",
-    desc:"Если ты сказал, что сделаешь — команда может рассчитывать на результат. Спокойствие и стабильность часто оказываются именно тем, чего не хватает в аврале.",
-    tags:["надёжность","дисциплина","дело"]
+  reliable: {
+    name: "Надёжный человек",
+    icon: "✓",
+    desc: "Если ты сказал, что сделаешь — можно не переживать. Ты умеешь держать слово и спокойно доводить начатое до конца.",
+    tags: ["надёжность", "дисциплина", "результат"]
   },
 
-  free:{
-    name:"Свободный дух",
-    icon:"↯",
-    desc:"Ты ценишь самостоятельность и возможность делать по-своему. Не боишься отличаться и приносишь в команду свежий взгляд.",
-    tags:["самостоятельность","характер","свобода"]
+  free: {
+    name: "Свободный дух",
+    icon: "✧",
+    desc: "Ты не любишь рамки и шаблоны. Тебе важно оставаться собой, искать свой путь и делать всё по-своему.",
+    tags: ["свобода", "самобытность", "характер"]
   }
 };
 
 
-/* =========================================================
+/* =================================
    7 ВОПРОСОВ
-   ========================================================= */
+   Каждый архетип встречается
+   ровно 2 раза среди ответов
+================================= */
 
 const questions = [
 
   {
-    q:"Представь: отряду нужно сделать важное дело уже сегодня. Что ты делаешь первым?",
-    image:"question-1.svg",
-    imageAlt:"Команда готовится к важному делу",
-    a:[
-      ["Беру ответственность и задаю направление","leader"],
-      ["Сначала смотрю на задачу целиком и продумываю шаги","strategist"],
-      ["Предлагаю идею, как сделать всё интереснее","creator"],
-      ["Спрашиваю, кому какая часть работы подходит","teammate"]
+    q: "В отряде появляется новая задача. Твоя первая реакция?",
+    image: "question-1.svg",
+    options: [
+      ["Соберу всех и распределю, кто чем займётся.", "leader"],
+      ["Придумаю необычный способ сделать это.", "creator"],
+      ["Сначала разберусь во всех деталях.", "strategist"],
+      ["Сразу предложу начать и подключусь сам.", "initiator"]
     ]
   },
 
   {
-    q:"До большого события остаётся совсем мало времени, а дел ещё много. Твоя реакция?",
-    image:"question-2.svg",
-    imageAlt:"Команда готовится к событию в последний момент",
-    a:[
-      ["Быстро составляю понятный план и распределяю задачи","organizer"],
-      ["Говорю: «Давайте я начну» — и запускаю работу","initiator"],
-      ["Стараюсь зарядить остальных и не дать команде сдаться","motivator"],
-      ["Выбираю конкретную задачу и спокойно довожу её до конца","reliable"]
+    q: "Что ты обычно делаешь, когда команда начинает уставать?",
+    image: "question-2.svg",
+    options: [
+      ["Придумаю, как поднять настроение.", "energizer"],
+      ["Помогу тем, кому сейчас сложнее всего.", "mentor"],
+      ["Напомню всем, ради чего мы это делаем.", "motivator"],
+      ["Возьму часть работы на себя.", "reliable"]
     ]
   },
 
   {
-    q:"Вам предлагают придумать новое отрядное мероприятие. Что тебя цепляет больше всего?",
-    image:"question-3.svg",
-    imageAlt:"Команда придумывает новое мероприятие",
-    a:[
-      ["Придумать яркую идею и необычную концепцию","creator"],
-      ["Снять, оформить и рассказать об этом так, чтобы все заметили","media"],
-      ["Попробовать формат, которого раньше не было","explorer"],
-      ["Собрать всех вместе и создать классную атмосферу","soul"]
+    q: "Что тебе интереснее всего во время отрядной жизни?",
+    image: "question-3.svg",
+    options: [
+      ["Снимать, фотографировать и создавать контент.", "media"],
+      ["Знакомиться с новыми людьми и пробовать новое.", "explorer"],
+      ["Создавать атмосферу и проводить время вместе.", "soul"],
+      ["Находить свой собственный способ делать вещи.", "free"]
     ]
   },
 
   {
-    q:"В отряд приходит новичок и пока чувствует себя немного неуверенно. Что ты скорее сделаешь?",
-    image:"question-4.svg",
-    imageAlt:"Новый участник знакомится с отрядом",
-    a:[
-      ["Объясню, помогу разобраться и поделюсь своим опытом","mentor"],
-      ["Позову его в общую работу, чтобы он сразу почувствовал команду","teammate"],
-      ["Постараюсь познакомить со всеми и сделать атмосферу комфортнее","soul"],
-      ["Поддержу и помогу поверить, что у него всё получится","motivator"]
+    q: "Представь, что нужно подготовить большое мероприятие. Какая роль тебе ближе?",
+    image: "question-4.svg",
+    options: [
+      ["Следить за планом, сроками и деталями.", "organizer"],
+      ["Придумывать концепцию и оформление.", "creator"],
+      ["Объединять людей и следить за общей атмосферой.", "teammate"],
+      ["Продумать стратегию и возможные варианты.", "strategist"]
     ]
   },
 
   {
-    q:"У тебя появился свободный день в отряде. Чем интереснее всего его заполнить?",
-    image:"question-5.svg",
-    imageAlt:"Свободный день и новые возможности",
-    a:[
-      ["Попробовать что-то новое, чего раньше не делал","explorer"],
-      ["Придумать собственный формат и сделать всё по-своему","free"],
-      ["Устроить что-нибудь активное и не сидеть на месте","energizer"],
-      ["Создать фото, видео или другую историю про этот день","media"]
+    q: "Кто-то из ребят говорит: «У меня не получится». Что ты сделаешь?",
+    image: "question-5.svg",
+    options: [
+      ["Скажу: «Давай попробуем вместе».", "teammate"],
+      ["Помогу разобраться и объясню, как сделать.", "mentor"],
+      ["Подбодрю и напомню, сколько уже получилось.", "motivator"],
+      ["Просто буду рядом и поддержу.", "soul"]
     ]
   },
 
   {
-    q:"Команда столкнулась со сложной задачей. Какую роль ты обычно берёшь на себя?",
-    image:"question-6.svg",
-    imageAlt:"Команда решает сложную задачу",
-    a:[
-      ["Навожу порядок: кто, что и когда делает","organizer"],
-      ["Помогаю человеку разобраться и понять, как справиться","mentor"],
-      ["Продумываю несколько шагов вперёд и выбираю лучший вариант","strategist"],
-      ["Беру на себя свою часть и слежу, чтобы она была сделана","reliable"]
+    q: "Какой комплимент тебе было бы приятнее всего услышать?",
+    image: "question-6.svg",
+    options: [
+      ["«На тебя всегда можно положиться».", "reliable"],
+      ["«С тобой никогда не бывает скучно».", "energizer"],
+      ["«У тебя всегда классные идеи».", "media"],
+      ["«Ты умеешь вести за собой».", "leader"]
     ]
   },
 
   {
-    q:"Большое дело закончилось. Какая мысль больше всего похожа на тебя?",
-    image:"question-7.svg",
-    imageAlt:"Команда завершила большое дело",
-    a:[
-      ["«Класс, теперь я хочу попробовать что-нибудь ещё!»","energizer"],
-      ["«А что можно сделать следующим?» — и уже хочется начинать","initiator"],
-      ["«Я сделал это по-своему — и мне это нравится»","free"],
-      ["«Главное, что команда смогла сделать это вместе»","leader"]
+    q: "Если бы твой отряд мог попробовать что-то совершенно новое, ты бы…",
+    image: "question-7.svg",
+    options: [
+      ["Первым предложил попробовать.", "initiator"],
+      ["Сразу согласился — люблю новый опыт.", "explorer"],
+      ["Сделал всё по-своему и добавил индивидуальности.", "free"],
+      ["Организовал так, чтобы всё получилось.", "organizer"]
     ]
   }
 
 ];
 
 
-/* =========================================================
-   СОСТОЯНИЕ ТЕСТА
-   ========================================================= */
+/* =================================
+   ПЕРЕМЕННЫЕ
+================================= */
 
 let current = 0;
-let answers = Array(questions.length).fill(null);
-
-const $ = id => document.getElementById(id);
+let answers = [];
 
 
-/* =========================================================
-   ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ
-   ========================================================= */
+/* =================================
+   ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+================================= */
 
-function show(id){
-  ["start","quiz","result"].forEach(x=>{
-    $(x).classList.toggle("hidden",x!==id);
-  });
+function $(id) {
+  return document.getElementById(id);
+}
+
+function showScreen(screen) {
+  $("start").classList.add("hidden");
+  $("quiz").classList.add("hidden");
+  $("result").classList.add("hidden");
+
+  $(screen).classList.remove("hidden");
 }
 
 
-/* =========================================================
-   ОТОБРАЖЕНИЕ ВОПРОСА
-   ========================================================= */
+/* =================================
+   СТАРТ
+================================= */
 
-function render(){
+function start() {
+  current = 0;
+  answers = [];
+  showScreen("quiz");
+  render();
+}
+
+
+/* =================================
+   ОТОБРАЖЕНИЕ ВОПРОСА
+================================= */
+
+function render() {
 
   const item = questions[current];
 
-  $("quiz").classList.remove("fade-in");
-  void $("quiz").offsetWidth;
-  $("quiz").classList.add("fade-in");
-
-  $("progressKicker").textContent =
-    `Вопрос ${current+1} из ${questions.length}`;
-
-  $("progressDots").innerHTML =
-    questions.map((_,i)=>`
-      <span class="progress-dot
-        ${i<current ? "done" : ""}
-        ${i===current ? "current" : ""}
-      "></span>
-    `).join("");
-
-  $("progressText").textContent =
-    `${current+1} / ${questions.length}`;
+  $("num").textContent =
+    "ВОПРОС " + (current + 1) + " ИЗ " + questions.length;
 
   $("bar").style.width =
-    `${(current/questions.length)*100}%`;
+    ((current + 1) / questions.length * 100) + "%";
 
+  $("question").textContent = item.q;
 
-  /* ---------- КАРТИНКА ВОПРОСА ---------- */
+  /* Удаляем старую картинку */
+  const oldImage = document.querySelector(".question-image");
+  if (oldImage) {
+    oldImage.remove();
+  }
 
-  $("question").innerHTML = `
+  /* Создаём область для картинки */
+  if (item.image) {
 
-    <div class="question-kicker">
-      Твоя интуиция
-    </div>
+    const imageWrap = document.createElement("div");
+    imageWrap.className = "question-image";
 
-    <div class="question-image">
-      <img
-        src="${item.image}"
-        alt="${item.imageAlt}"
-        onerror="this.parentElement.classList.add('image-placeholder'); this.style.display='none';"
-      >
+    imageWrap.style.cssText = `
+      width: 100%;
+      max-width: 520px;
+      height: 170px;
+      margin: 0 auto 20px;
+      border-radius: 18px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    `;
 
-      <div class="image-placeholder-content">
-        <span>МЕСТО ДЛЯ КАРТИНКИ</span>
-        <small>question-${current+1}.svg</small>
-      </div>
-    </div>
+    const img = document.createElement("img");
 
-    <h2>${item.q}</h2>
-  `;
+    img.src = item.image;
+    img.alt = "";
+    img.style.cssText = `
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    `;
 
-
-  /* ---------- ВАРИАНТЫ ---------- */
-
-  $("options").innerHTML = "";
-
-  item.a.forEach(([text,key],i)=>{
-
-    const b = document.createElement("button");
-
-    b.className =
-      "option" +
-      (answers[current]===i ? " selected" : "");
-
-    b.setAttribute(
-      "data-number",
-      String(i+1).padStart(2,"0")
-    );
-
-    b.textContent = text;
-
-    b.onclick = ()=>{
-
-      answers[current] = i;
-
-      render();
-
+    /*
+      Если картинки question-1.svg и т.д.
+      ещё не загружены — блок автоматически скрывается.
+    */
+    img.onerror = function() {
+      imageWrap.style.display = "none";
     };
 
-    $("options").appendChild(b);
+    imageWrap.appendChild(img);
 
+    $("question").parentNode.insertBefore(
+      imageWrap,
+      $("question")
+    );
+  }
+
+
+  /* Варианты ответов */
+  $("answers").innerHTML = "";
+
+  item.options.forEach(function(option, index) {
+
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.className = "option";
+    button.textContent = option[0];
+
+    if (answers[current] === index) {
+      button.classList.add("selected");
+    }
+
+    button.onclick = function() {
+
+      answers[current] = index;
+
+      /* Убираем выделение со всех вариантов */
+      document
+        .querySelectorAll("#answers .option")
+        .forEach(function(btn) {
+          btn.classList.remove("selected");
+        });
+
+      button.classList.add("selected");
+
+      renderNavigation();
+    };
+
+    $("answers").appendChild(button);
   });
 
-
-  $("nextBtn").disabled =
-    answers[current] === null;
-
-  $("backBtn").style.visibility =
-    current===0 ? "hidden" : "visible";
+  renderNavigation();
 }
 
 
-/* =========================================================
-   ПОДСЧЁТ РЕЗУЛЬТАТА
-   ========================================================= */
+/* =================================
+   КНОПКИ НАЗАД / ДАЛЕЕ
+================================= */
 
-function calculate(){
+function renderNavigation() {
+
+  const oldNav = document.querySelector(".quiz-navigation");
+
+  if (oldNav) {
+    oldNav.remove();
+  }
+
+  const navigation = document.createElement("div");
+
+  navigation.className = "quiz-navigation";
+
+  navigation.style.cssText = `
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 22px;
+  `;
+
+
+  /* Кнопка назад */
+
+  if (current > 0) {
+
+    const back = document.createElement("button");
+
+    back.type = "button";
+    back.className = "btn alt";
+    back.textContent = "← Назад";
+
+    back.onclick = function() {
+      current--;
+      render();
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    };
+
+    navigation.appendChild(back);
+  }
+
+
+  /* Кнопка далее появляется после ответа */
+
+  if (answers[current] !== undefined) {
+
+    const next = document.createElement("button");
+
+    next.type = "button";
+    next.className = "btn";
+
+    next.textContent =
+      current === questions.length - 1
+        ? "Узнать результат"
+        : "Далее →";
+
+    next.onclick = function() {
+
+      if (current < questions.length - 1) {
+
+        current++;
+
+        render();
+
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth"
+        });
+
+      } else {
+
+        showResult();
+
+      }
+    };
+
+    navigation.appendChild(next);
+  }
+
+
+  $("answers").appendChild(navigation);
+}
+
+
+/* =================================
+   ПОДСЧЁТ РЕЗУЛЬТАТА
+================================= */
+
+function calculate() {
 
   const scores = {};
 
-  Object.keys(archetypes).forEach(key=>{
+  Object.keys(archetypes).forEach(function(key) {
     scores[key] = 0;
   });
 
 
   /*
-    Каждый ответ = +2 балла.
-    Таким образом каждый архетип встречается
-    ровно в двух вариантах ответа.
+    Каждый выбранный ответ даёт +2 балла
+    соответствующему архетипу.
   */
 
-  answers.forEach((ans,qi)=>{
+  answers.forEach(function(answerIndex, questionIndex) {
 
-    if(ans === null) return;
+    if (answerIndex === undefined) return;
 
-    const key =
-      questions[qi].a[ans][1];
+    const archetype =
+      questions[questionIndex].options[answerIndex][1];
 
-    scores[key] += 2;
-
+    scores[archetype] += 2;
   });
 
 
-  /*
-    Если несколько архетипов набрали одинаковое
-    количество баллов, выбираем тот, который
-    встретился раньше в тесте.
-  */
+  /* Ищем максимальный результат */
 
   let best = null;
   let bestScore = -1;
 
-  answers.forEach((ans,qi)=>{
+  /*
+    При равенстве используется первый выбранный
+    архетип — это делает систему стабильной.
+  */
 
-    if(ans === null) return;
+  for (let i = 0; i < answers.length; i++) {
 
-    const key =
-      questions[qi].a[ans][1];
+    const answerIndex = answers[i];
 
-    if(scores[key] > bestScore){
+    if (answerIndex === undefined) continue;
 
-      best = key;
-      bestScore = scores[key];
+    const archetype =
+      questions[i].options[answerIndex][1];
 
+    if (scores[archetype] > bestScore) {
+
+      bestScore = scores[archetype];
+      best = archetype;
     }
+  }
 
-  });
 
   return best;
 }
 
 
-/* =========================================================
-   ПОКАЗ РЕЗУЛЬТАТА
-   ========================================================= */
+/* =================================
+   РЕЗУЛЬТАТ
+================================= */
 
-function showResult(){
+function showResult() {
 
-  $("bar").style.width = "100%";
+  const resultKey = calculate();
 
-  const key = calculate();
-  const r = archetypes[key];
+  const result = archetypes[resultKey];
 
-  $("resultIcon").textContent = r.icon;
+  showScreen("result");
 
-  $("resultName").textContent = r.name;
 
-  $("resultDescription").textContent =
-    r.desc;
+  $("rtitle").textContent =
+    result.icon + " " + result.name;
 
-  $("resultTags").innerHTML =
-    r.tags.map(x=>`
-      <span class="tag">${x}</span>
-    `).join("");
+  $("rtext").textContent =
+    result.desc;
 
-  $("progressText").textContent = "";
 
-  show("result");
+  /* Удаляем старые дополнительные элементы */
+
+  const oldExtra =
+    document.querySelector(".result-extra");
+
+  if (oldExtra) {
+    oldExtra.remove();
+  }
+
+
+  /* Создаём теги */
+
+  const extra = document.createElement("div");
+
+  extra.className = "result-extra";
+
+  extra.style.cssText = `
+    margin-top: 18px;
+  `;
+
+
+  const tags = document.createElement("div");
+
+  tags.className = "tags";
+
+  result.tags.forEach(function(tag) {
+
+    const span = document.createElement("span");
+
+    span.className = "tag";
+    span.textContent = tag;
+
+    tags.appendChild(span);
+  });
+
+
+  extra.appendChild(tags);
+
+
+  $("rtext").parentNode.appendChild(extra);
 }
 
 
-/* =========================================================
-   КНОПКИ
-   ========================================================= */
+/* =================================
+   ПРОЙТИ ЕЩЁ РАЗ
+================================= */
 
-$("startBtn").onclick = ()=>{
-
-  current = 0;
-
-  answers.fill(null);
-
-  show("quiz");
-
-  render();
-
-};
-
-
-$("nextBtn").onclick = ()=>{
-
-  if(current < questions.length - 1){
-
-    current++;
-
-    render();
-
-  }else{
-
-    showResult();
-
-  }
-
-};
-
-
-$("backBtn").onclick = ()=>{
-
-  if(current > 0){
-
-    current--;
-
-    render();
-
-  }
-
-};
-
-
-$("restartBtn").onclick = ()=>{
-
-  show("quiz");
+function restart() {
 
   current = 0;
+  answers = [];
 
-  answers.fill(null);
-
-  render();
-
-};
+  showScreen("start");
+}
 
 
-/* =========================================================
-   ПОДЕЛИТЬСЯ РЕЗУЛЬТАТОМ
-   ========================================================= */
+/* =================================
+   ЗАЩИТА ОТ ОШИБОК
+================================= */
 
-$("copyBtn").onclick = async ()=>{
+window.start = start;
+window.restart = restart;
 
-  const text =
-    `Я прошёл(ла) тест «Какой у тебя отрядный архетип?» и мой результат — ${$("resultName").textContent}.`;
-
-  try{
-
-    await navigator.clipboard.writeText(text);
-
-    $("copyBtn").textContent =
-      "Результат скопирован ✓";
-
-    setTimeout(()=>{
-
-      $("copyBtn").textContent =
-        "Поделиться результатом";
-
-    },1800);
-
-  }catch(e){
-
-    prompt(
-      "Скопируй текст:",
-      text
-    );
-
-  }
-
-};
 </script>
 </body>
 </html>
